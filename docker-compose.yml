@@ -1,0 +1,12 @@
+version: "3.2"
+services:
+
+  mongodb-2:
+    image: mongo
+    container_name: mongodb-2
+    restart: always
+    volumes:
+    - ./mongo-seed:/tmp # ./from:location in container
+    - ./initdb:/docker-entrypoint-initdb.d # pass script from directory into docker entry point. All passed scripts are run on startup
+    ports:
+      - 27017:27017

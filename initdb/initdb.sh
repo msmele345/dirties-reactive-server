@@ -1,0 +1,1 @@
+mongoimport --db Potty --collection PottyEvent --file  /tmp/potties.json
