@@ -7,13 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.time.LocalDateTime;
 
 @Slf4j
-@Service
+//@Service
 @RequiredArgsConstructor
 public class DataInitializerService implements ApplicationListener<ApplicationReadyEvent> {
 

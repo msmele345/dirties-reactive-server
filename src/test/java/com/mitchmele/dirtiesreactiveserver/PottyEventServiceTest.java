@@ -55,7 +55,7 @@ class PottyEventServiceTest {
                 .type("wet")
                 .build();
 
-        when(repository.findByEventId(any(ObjectId.class)))
+        when(repository.findPottyEventById(any(ObjectId.class)))
                 .thenReturn(Mono.just((event)));
 
         Mono<PottyEvent> actual = service.getPottyEventByEventId(inputId);
@@ -67,7 +67,7 @@ class PottyEventServiceTest {
                 })
                 .verifyComplete();
 
-        verify(repository).findByEventId(inputId);
+        verify(repository).findPottyEventById(inputId);
     }
 
     @Test
@@ -106,7 +106,7 @@ class PottyEventServiceTest {
     @Test
     void getByPottyId_throwsWhenNotPresent() {
 
-        when(repository.findByEventId(any()))
+        when(repository.findPottyEventById(any()))
                 .thenReturn(Mono.empty());
 
         Mono<PottyEvent> actual = service.getPottyEventByEventId(new ObjectId());

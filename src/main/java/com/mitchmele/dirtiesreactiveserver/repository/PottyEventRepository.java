@@ -9,5 +9,5 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface PottyEventRepository extends ReactiveMongoRepository<PottyEvent, String> {
 
-    Mono<PottyEvent> findByEventId(ObjectId id);
+    Mono<PottyEvent> findPottyEventById(ObjectId id);
 }

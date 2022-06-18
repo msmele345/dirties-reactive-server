@@ -23,7 +23,7 @@ public class PottyEventServiceHandler implements PottyEventService {
 
     @Override
     public Mono<PottyEvent> getPottyEventByEventId(ObjectId eventId) {
-        return repository.findByEventId(eventId)
+        return repository.findPottyEventById(eventId)
                 .switchIfEmpty(Mono.error(PottyEventNotFoundException::new));
     }
 
