@@ -6,12 +6,15 @@ import com.mitchmele.dirtiesreactiveserver.model.PottyEventNotFoundException;
 import com.mitchmele.dirtiesreactiveserver.model.PottyServiceResponse;
 import com.mitchmele.dirtiesreactiveserver.service.PottyEventService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PottyEventServiceHandler implements PottyEventService {
@@ -19,7 +22,7 @@ public class PottyEventServiceHandler implements PottyEventService {
     private final PottyEventRepository repository;
 
     @Override
-    public Mono<PottyEvent> getPottyEventByEventId(String eventId) {
+    public Mono<PottyEvent> getPottyEventByEventId(ObjectId eventId) {
         return repository.findByEventId(eventId)
                 .switchIfEmpty(Mono.error(PottyEventNotFoundException::new));
     }
@@ -30,14 +33,8 @@ public class PottyEventServiceHandler implements PottyEventService {
     }
 
     @Override
-    public Mono<PottyEvent> getPottyEvent(String eventId) {
-        return null;
-    }
-
-    @Override
     public Flux<PottyEvent> getAllPotties() {
-        return repository.findAll()
-                .switchIfEmpty(Mono.error(RuntimeException::new));
+        return repository.findAll();
     }
 
     @Override
@@ -52,7 +49,7 @@ public class PottyEventServiceHandler implements PottyEventService {
 
     private PottyEventDTO mapEvent(PottyEvent event) {
         return PottyEventDTO.builder()
-                .id(event.getEventId())
+                .id(event.getId().toString())
                 .type(event.getType())
                 .description(event.getDescription())
                 .pottyTime(event.getPottyTime())

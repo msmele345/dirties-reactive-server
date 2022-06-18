@@ -1,18 +1,19 @@
 package com.mitchmele.dirtiesreactiveserver.controller;
 
 import com.mitchmele.dirtiesreactiveserver.model.PottyEvent;
-import com.mitchmele.dirtiesreactiveserver.model.PottyEventDTO;
 import com.mitchmele.dirtiesreactiveserver.model.PottyServiceResponse;
 import com.mitchmele.dirtiesreactiveserver.repository.PottyEventRepository;
 import com.mitchmele.dirtiesreactiveserver.repository.PottyEventServiceHandler;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-
+@Slf4j
+@CrossOrigin
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
@@ -24,14 +25,14 @@ public class DirtiesController {
     @GetMapping("/dirties/{id}")
     public Mono<ResponseEntity<PottyEvent>> getPottyEventById(@PathVariable String id) {
 
-        return repository.findByEventId(id)
+        return repository.findById(id)
                 .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+                    .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @GetMapping(value = "/dirties")
     public Flux<PottyEvent> getAllPotties() {
-        return repository.findAll();
+        return service.getAllPotties();
     }
 
     @GetMapping(value = "/regs")
@@ -46,6 +47,7 @@ public class DirtiesController {
 
     @PostMapping("/dirties")
     public Mono<PottyEvent> savePotty(@RequestBody PottyEvent pottyEvent) {
+        log.info("GOT NEW POTTY: {}", pottyEvent);
         return service.saveNewPotty(pottyEvent);
     }
 }

@@ -7,6 +7,7 @@ import com.mitchmele.dirtiesreactiveserver.model.PottyEventDTO;
 import com.mitchmele.dirtiesreactiveserver.model.PottyServiceResponse;
 import com.mitchmele.dirtiesreactiveserver.repository.PottyEventRepository;
 import com.mitchmele.dirtiesreactiveserver.repository.PottyEventServiceHandler;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +28,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-//@ExtendWith(SpringExtension.class)
-//@WebFluxTest(controllers = DirtiesController.class)
-//@SpringBootTest
-//@AutoConfigureWebTestClient
-//@Import(PottyEventService.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class DirtiesControllerTest {
 
@@ -56,19 +52,19 @@ class DirtiesControllerTest {
     void getAllPotties() {
 
         PottyEvent pe = PottyEvent.builder()
-                .eventId("1")
+                .id(new ObjectId())
                 .pottyTime(LocalDateTime.now())
                 .type("wet")
                 .build();
 
         PottyEvent pe2 = PottyEvent.builder()
-                .eventId("2")
+                .id(new ObjectId())
                 .pottyTime(LocalDateTime.now())
                 .type("dirty")
                 .build();
 
         Flux<PottyEvent> potties = Flux.just(pe, pe2);
-        when(repository.findAll()).thenReturn(potties);
+        when(service.getAllPotties()).thenReturn(potties);
 
         webTestClient
                 .get()
@@ -79,14 +75,14 @@ class DirtiesControllerTest {
                 .isOk()
                 .expectBodyList(PottyEvent.class);
 
-        verify(repository).findAll();
+        verify(service).getAllPotties();
     }
 
     @Test
     void getPottyEventByID() {
 
         PottyEvent pe = PottyEvent.builder()
-                .eventId("1")
+                .id(new ObjectId())
                 .pottyTime(LocalDateTime.now())
                 .type("wet")
                 .build();
@@ -140,7 +136,7 @@ class DirtiesControllerTest {
     void savePotty()  {
 
         PottyEvent pe = PottyEvent.builder()
-                .eventId("1")
+                .id(new ObjectId())
                 .pottyTime(LocalDateTime.now())
                 .type("wet")
                 .build();

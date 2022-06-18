@@ -6,6 +6,7 @@ import com.mitchmele.dirtiesreactiveserver.model.PottyEventNotFoundException;
 import com.mitchmele.dirtiesreactiveserver.model.PottyServiceResponse;
 import com.mitchmele.dirtiesreactiveserver.repository.PottyEventRepository;
 import com.mitchmele.dirtiesreactiveserver.repository.PottyEventServiceHandler;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +21,6 @@ import java.time.LocalDateTime;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -43,30 +43,31 @@ class PottyEventServiceTest {
     }
 
     @Test
-    void getPottyById() {
+    void getPottyEventByEventId() {
 
         LocalDateTime mockTime = LocalDateTime.of(2, 1, 1, 1, 1);
 
+        ObjectId inputId = new ObjectId();
+
         PottyEvent event = PottyEvent.builder()
-                .eventId("1")
+                .id(inputId)
                 .pottyTime(mockTime)
                 .type("wet")
                 .build();
 
-        when(repository.findByEventId(anyString()))
+        when(repository.findByEventId(any(ObjectId.class)))
                 .thenReturn(Mono.just((event)));
 
-        Mono<PottyEvent> actual = service.getPottyEvent("1");
+        Mono<PottyEvent> actual = service.getPottyEventByEventId(inputId);
 
         StepVerifier
                 .create(actual)
-//                .expectNext(eventDto)
                 .consumeNextWith(potty -> {
                     assertThat(potty.getType()).isEqualTo("wet");
                 })
                 .verifyComplete();
 
-        verify(repository).findByEventId("1");
+        verify(repository).findByEventId(inputId);
     }
 
     @Test
@@ -76,13 +77,13 @@ class PottyEventServiceTest {
         LocalDateTime mockTime2 = LocalDateTime.of(2, 1, 1, 2, 1);
 
         PottyEvent event = PottyEvent.builder()
-                .eventId("1")
+                .id(new ObjectId())
                 .pottyTime(mockTime)
                 .type("wet")
                 .build();
 
         PottyEvent event2 = PottyEvent.builder()
-                .eventId("2")
+                .id(new ObjectId())
                 .pottyTime(mockTime2)
                 .type("dirty")
                 .build();
@@ -105,10 +106,10 @@ class PottyEventServiceTest {
     @Test
     void getByPottyId_throwsWhenNotPresent() {
 
-        when(repository.findByEventId(anyString()))
+        when(repository.findByEventId(any()))
                 .thenReturn(Mono.empty());
 
-        Mono<PottyEvent> actual = service.getPottyEvent("1");
+        Mono<PottyEvent> actual = service.getPottyEventByEventId(new ObjectId());
 
         StepVerifier
                 .create(actual)
@@ -120,26 +121,27 @@ class PottyEventServiceTest {
     @Test
     void getAllPottiesFromFluxToServiceResponse() {
 
+        ObjectId id = new ObjectId();
         PottyEvent event = PottyEvent.builder()
-                .eventId("1")
+                .id(id)
                 .pottyTime(mockTime)
                 .type("wet")
                 .build();
 
         PottyEvent event2 = PottyEvent.builder()
-                .eventId("2")
+                .id(id)
                 .pottyTime(mockTime2)
                 .type("dirty")
                 .build();
 
         PottyEventDTO ex1 = PottyEventDTO.builder()
-                .id("1")
+                .id(id.toString())
                 .pottyTime(mockTime)
                 .type("wet")
                 .build();
 
         PottyEventDTO ex2 = PottyEventDTO.builder()
-                .id("2")
+                .id(id.toString())
                 .pottyTime(mockTime2)
                 .type("dirty")
                 .build();
@@ -161,7 +163,7 @@ class PottyEventServiceTest {
     void savePotty() {
 
         PottyEvent event = PottyEvent.builder()
-                .eventId("1")
+                .id(new ObjectId())
                 .pottyTime(mockTime)
                 .type("wet")
                 .build();

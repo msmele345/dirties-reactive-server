@@ -4,6 +4,7 @@ import com.mitchmele.dirtiesreactiveserver.model.PottyEvent;
 import com.mitchmele.dirtiesreactiveserver.repository.PottyEventRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ import reactor.core.publisher.Flux;
 import java.time.LocalDateTime;
 
 @Slf4j
-//@Service
+@Service
 @RequiredArgsConstructor
 public class DataInitializerService implements ApplicationListener<ApplicationReadyEvent> {
 
@@ -22,28 +23,28 @@ public class DataInitializerService implements ApplicationListener<ApplicationRe
     public void onApplicationEvent(ApplicationReadyEvent event) {
 
         PottyEvent pe = PottyEvent.builder()
-                .eventId("1")
+                .id(new ObjectId())
                 .pottyTime(LocalDateTime.now().minusDays(1))
                 .type("wet")
                 .description("bad")
                 .build();
 
         PottyEvent pe2 = PottyEvent.builder()
-                .eventId("2")
+                .id(new ObjectId())
                 .pottyTime(LocalDateTime.now().minusDays(2))
                 .type("dirty")
                 .description("blow out")
                 .build();
 
         PottyEvent pe3 = PottyEvent.builder()
-                .eventId("3")
+                .id(new ObjectId())
                 .pottyTime(LocalDateTime.now().minusDays(3))
                 .type("dirty")
                 .description("mild")
                 .build();
 
         PottyEvent p4 = PottyEvent.builder()
-                .eventId("4")
+                .id(new ObjectId())
                 .pottyTime(LocalDateTime.now().minusDays(5))
                 .type("wet")
                 .description("odd color")
